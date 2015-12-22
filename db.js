@@ -1,0 +1,38 @@
+import pg from 'pg';
+import chalk from 'chalk';
+
+const connString = `postgress://dabramov:password@localhost/corpus`; // whatever
+const DEBUG = true;
+
+/**
+ * Make a db query using current connection string (based on environment)
+ *
+ * @return {Promise}
+ */
+export const query = (text, values) => {
+    return new Promise((resolve, reject) => {
+        pg.connect(connString, (connectionErr, client, release) => {
+            if (connectionErr) {
+                return reject(connectionErr);
+            }
+
+            if (DEBUG) {
+                console.log(chalk.red('========================================'));
+                console.log(chalk.blue('=> SQL:'), chalk.green(text));
+                console.log(chalk.blue('=> values: '), chalk.green((values || '').toString()));
+                console.log(chalk.red('========================================='));
+            }
+
+            client.query(text, values, (queryError, result) => {
+                // release the connection
+                release();
+
+                if (queryError) {
+                    return reject(queryError);
+                }
+
+                resolve(result);
+            });
+        });
+    });
+};
