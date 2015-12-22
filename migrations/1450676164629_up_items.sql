@@ -6,7 +6,6 @@ create table items (
     type varchar(256),
     parent integer,
     kids text,
-    url varchar(512),
-    title varchar(1024),
-    score integer
+    url varchar(1024),
+    title varchar(1024)
 );
